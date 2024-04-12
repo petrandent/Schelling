@@ -22,10 +22,10 @@ class Console(tk.Frame):
         super().__init__(parent)
         frame=tk.Frame(parent,relief=tk.GROOVE,bd=3)
         frame.pack()
-        self.row_num=tk.StringVar()
-        self.col_num=tk.StringVar()
-        self.num_of_races=tk.StringVar()
-        self.pop_of_race=tk.StringVar()
+        self.row_num=tk.IntVar()
+        self.col_num=tk.IntVar()
+        self.num_of_races=tk.IntVar()
+        self.pop_of_race=tk.IntVar()
         self.happiness=tk.StringVar()
         self.dictionary={}
         Spinbox(frame,"Number of Rows",1,10,1,self.row_num)
@@ -43,20 +43,3 @@ class Console(tk.Frame):
         self.dictionary.update({"races_num":self.num_of_races.get()})
         self.dictionary.update({"races_pop":self.pop_of_race.get()})
         self.dictionary.update({"happiness":self.happiness.get()})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
