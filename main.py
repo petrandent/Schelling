@@ -9,14 +9,21 @@ class App(tk.Tk):
         self.user_input_obj=control.Console(self)
         self.user_input_obj.pack()
         self.user_input=self.user_input_obj.dictionary
-        bn=tk.Button(self,text="Print Map",command=self.printDict).pack()
+        btn=tk.Button(self,text="Print Map",command=self.printDict).pack()
         self.mainloop()
 
     def printDict(self):
-        colors=["blue","orange","black","yellow","brown","cyan","pink","green","purple","red"]
-        c1=city.City_canvas(self,self.user_input)
-        c1.distribute_houses()
+        self.frame1=tk.Frame(self)
+        self.frame1.pack()
+        c1=city.City_canvas(self.frame1,self.user_input)
         c1.pack()
+
+
+
+
+
+
+
 
 
 
