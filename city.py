@@ -20,8 +20,9 @@ class Books():
         #list that has all the possible addresses of the city in x,y tuples.
         self.addresses_record=[]
 
-        #dictionary of houses with no residents
-        self.unoccypied_houses={}
+        #list of tuples of coords of houses with no residents
+        self.unoccupied_houses=[]
+
 
     def create_books(self):
         #user defined parameters
@@ -29,6 +30,7 @@ class Books():
         self.cols=self.user_input["cols"]
         self.races_pop=self.user_input["races_pop"]
         self.num_of_races=self.user_input["races_num"]
+        self.threshold=self.user_input["threshold"]
 
         #houses initial distribution inside the city canvas and populating houses dictionary and list for residents
         #fill adresses record and fills the houses dictionary with house objects.
@@ -40,7 +42,7 @@ class Books():
 
         #limits the number of the colours according to the number of races
         #and shuffles lists with random order of colour and addresses to allocate to the residents randomly.
-        #lastly creates resident objects and populates and updates houses dictionary
+        #creates resident objects and populates and updates houses dictionary
         colour_alloc=colour_allocation(self.num_of_races,self.races_pop)
         random.shuffle(colour_alloc)
         random.shuffle(self.addresses_record)
@@ -50,7 +52,14 @@ class Books():
             self.houses[resident_coords].resident=self.residents[i]
             self.houses[resident_coords].colour=self.residents[i].colour
 
-        #calculation of neighbours and happiness of each resident, and testing
+        #populate unoccupied_houses list
+        for i in self.houses:
+            if self.houses[i].resident==None:
+                self.unoccupied_houses.append(self.houses[i].coords)
+        self.neighbours_happiness()
+
+    def neighbours_happiness(self):
+        """calculation of neighbours and happiness of each resident, and testing"""
         for i in self.residents:
             self.residents[i].find_neighbours(self.addresses_record)
         for i in self.residents:
@@ -59,26 +68,32 @@ class Books():
             print(f"{self.residents[i].colour}//{self.residents[i].coords}:{self.residents[i].happiness}")
 
 
-
-
-
     def update_books(self):
-        pass
+        """all unhappy residents move to a random unoccupied house"""
+        unhappy_residents_ids=[]
+        unoccupied_houses=self.unoccupied_houses
+        for i in self.residents:
+            if self.residents[i].happiness<self.threshold:
+                unhappy_residents_ids.append(i)
+        random.shuffle(unhappy_residents_ids)
+        random.shuffle(unoccupied_houses)
 
-
+        for i in unhappy_residents_ids:
+            self.residents[i].move(unoccupied_houses)
+            self.houses[unoccupied_houses].resident=self.residents[i]
 
 class House():
     """class for a house"""
-    def __init__(self,coods,num_of_rows,num_of_cols):
+    def __init__(self,coords,num_of_rows,num_of_cols):
         """enumeration for rows and columns starts from zero"""
-        self.coods=coods
+        self.coords=coords
         self.resident=None
         self.colour="gray"
         self.width=math.floor(canvas_size/num_of_cols)
         self.height=math.floor(canvas_size/num_of_rows)
 
     def __repr__(self):
-        return f"House({self.coods[0]},{self.coods[1]}):{self.colour}"
+        return f"House({self.coords[0]},{self.coords[1]}):{self.colour}"
 
 
 
@@ -96,8 +111,8 @@ class City_canvas(tk.Frame):
             self.draw_house(house)
 
     def draw_house(self,house):
-        self.canvas.create_rectangle(house.coods[1]*house.width,house.coods[0]*house.height,\
-        (house.coods[1]+1)*house.width,(house.coods[0]+1)*house.height,fill=house.colour)
+        self.canvas.create_rectangle(house.coords[1]*house.width,house.coords[0]*house.height,\
+        (house.coords[1]+1)*house.width,(house.coords[0]+1)*house.height,fill=house.colour)
 
 
 class Resident():

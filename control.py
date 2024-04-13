@@ -26,13 +26,13 @@ class Console(tk.Frame):
         self.col_num=tk.IntVar()
         self.num_of_races=tk.IntVar()
         self.pop_of_race=tk.IntVar()
-        self.happiness=tk.StringVar()
+        self.threshold=tk.StringVar()
         self.dictionary={}
         Spinbox(frame,"Number of Rows",1,10,1,self.row_num)
         Spinbox(frame,"Number of Columns",1,10,1,self.col_num)
         Spinbox(frame,"Number of Races",1,10,1,self.num_of_races)
         Spinbox(frame,"Race Population",1,20,1,self.pop_of_race)
-        Spinbox(frame,"Happiness threshold",0,1,0.1,self.happiness)
+        Spinbox(frame,"Happiness threshold",0,1,0.1,self.threshold)
         self.submit_btn=tk.Button(frame,text="Submit",command=self.submit)
         self.submit_btn.grid()
 
@@ -42,7 +42,7 @@ class Console(tk.Frame):
         self.dictionary.update({"cols":self.col_num.get()})
         self.dictionary.update({"races_num":self.num_of_races.get()})
         self.dictionary.update({"races_pop":self.pop_of_race.get()})
-        self.dictionary.update({"happiness":self.happiness.get()})
+        self.dictionary.update({"threshold":float(self.threshold.get())})
 
 
 
