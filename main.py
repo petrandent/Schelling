@@ -15,16 +15,12 @@ class App(tk.Tk):
     def printDict(self):
         self.frame1=tk.Frame(self)
         self.frame1.pack()
-        c1=city.City_canvas(self.frame1,self.user_input)
+        books1=city.Books(self.user_input)
+        books1.create_books()
+        c1=city.City_canvas(self.frame1,books1)
         c1.pack()
-
-
-
-
-
-
-
-
+##        for k in city_alternative.residents:
+##                print(f"{k}:{city_alternative.residents[k].happiness}")
 
 
 
