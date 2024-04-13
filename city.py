@@ -21,6 +21,7 @@ class Books():
         self.addresses_record=[]
 
 
+
     def create_books(self):
         #user defined parameters
         self.rows=self.user_input["rows"]
@@ -48,7 +49,7 @@ class Books():
             resident_coords=self.residents[i].coords
             self.houses[resident_coords].resident=self.residents[i]
             self.houses[resident_coords].colour=self.residents[i].colour
-        self.neighbours_happiness()
+
 
     def neighbours_happiness(self):
         """calculation of neighbours and happiness of each resident, and testing"""
@@ -57,32 +58,40 @@ class Books():
         for i in self.residents:
             self.residents[i].calculate_happiness(self.houses)
         for i in self.residents:
-            print(f"{self.residents[i].id_num}->{self.residents[i].colour}//{self.residents[i].coords}:{self.residents[i].happiness}")
+            print(f"{self.residents[i].id_num}-->{self.residents[i].colour}//{self.residents[i].coords}:{self.residents[i].happiness}")
 
 
     def update_books(self):
         """all unhappy residents move to a random unoccupied house"""
-
+        #list of tuples of coords of houses with no residents
         unoccupied_houses=[]
+
+        #list of id nums of residents who are unhappy
         unhappy_residents_ids=[]
+
         #populate unoccupied_houses list
         for i in self.houses:
             if self.houses[i].resident==None:
                 unoccupied_houses.append(self.houses[i].coords)
+        self.neighbours_happiness()
 
+
+        #fill unhappy residents
         for i in self.residents:
             if self.residents[i].happiness<self.threshold:
                 unhappy_residents_ids.append(i)
                 unoccupied_houses.append(self.residents[i].coords)
-        print(unhappy_residents_ids)
-        print(unoccupied_houses)
+
         random.shuffle(unhappy_residents_ids)
         random.shuffle(unoccupied_houses)
 
         for i in range(len(unhappy_residents_ids)):
-            self.residents[unhappy_residents_ids[i]].move(unoccupied_houses[i])
+            self.residents[unhappy_residents_ids[i]].move_house(unoccupied_houses[i],\
+            self.addresses_record,self.houses)
+            self.residents[unhappy_residents_ids[i]].coords=unoccupied_houses[i]
             self.houses[unoccupied_houses[i]].resident=self.residents[unhappy_residents_ids[i]]
-
+        print(unhappy_residents_ids)
+        print(unoccupied_houses)
 
 class House():
     """class for a house"""
@@ -129,8 +138,10 @@ class Resident():
     def __repr__(self):
         return f"id_num:{self.id_num}-colour:{self.colour}-house:({self.coords[0]},{self.coords[1]})"
 
-    def move(self,new_coords):
+    def move_house(self,new_coords,address,house_dict):
         self.coords=new_coords
+        self.find_neighbours(address)
+        self.happiness=self.calculate_happiness(house_dict)
 
     def find_neighbours(self,address_rec):
         searching=[(self.coords[0]+1,self.coords[1]),(self.coords[0]-1,self.coords[1]),
