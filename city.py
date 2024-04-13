@@ -118,8 +118,8 @@ class City_canvas(tk.Frame):
         self.canvas.pack()
 
         #drawing a house is done.
-        for house in books.houses.values():
-            self.draw_house(house)
+##        for house in books.houses.values():
+##            self.draw_house(house)
 
     def draw_house(self,house):
         self.canvas.create_rectangle(house.coords[1]*house.width,house.coords[0]*house.height,\
@@ -162,6 +162,7 @@ class Resident():
 
 
 def colour_allocation(num_of_races,population_of_each_race):
+    """limits the number of selected colours according to user input"""
     #full collection of 10 different colours as 10 is the maximum amount of different ethnicities
     colors=["blue","orange","black","yellow","brown","cyan","pink","green","purple","red"]
 
