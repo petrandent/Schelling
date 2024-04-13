@@ -19,10 +19,6 @@ class App(tk.Tk):
         books1.create_books()
         c1=city.City_canvas(self.frame1,books1)
         c1.pack()
-##        for k in city_alternative.residents:
-##                print(f"{k}:{city_alternative.residents[k].happiness}")
-
-
 
 
 if __name__=='__main__':

@@ -49,7 +49,16 @@ class Books():
             resident_coords=self.residents[i].coords
             self.houses[resident_coords].resident=self.residents[i]
             self.houses[resident_coords].colour=self.residents[i].colour
-        print(self.houses)
+
+        #calculation of neighbours and happiness of each resident, and testing
+        for i in self.residents:
+            self.residents[i].find_neighbours(self.addresses_record)
+        for i in self.residents:
+            self.residents[i].calculate_happiness(self.houses)
+        for i in self.residents:
+            print(f"{self.residents[i].colour}//{self.residents[i].coords}:{self.residents[i].happiness}")
+
+
 
 
 
@@ -91,14 +100,14 @@ class City_canvas(tk.Frame):
         (house.coods[1]+1)*house.width,(house.coods[0]+1)*house.height,fill=house.colour)
 
 
-
 class Resident():
     def __init__(self,id_num,colour,coords):
         """position is the coordinates of the house resident resides"""
         self.id_num=id_num
         self.colour=colour
         self.coords=coords
-        self.happiness=self.calculate_happiness()
+        self.happiness=0
+        self.neighbours=[]
 
     def __repr__(self):
         return f"id_num:{self.id_num}-colour:{self.colour}-house:({self.coords[0]},{self.coords[1]})"
@@ -106,16 +115,22 @@ class Resident():
     def move(self,new_coords):
         self.coords=new_coords
 
-    def find_neighbors(self):
+    def find_neighbours(self,address_rec):
         searching=[(self.coords[0]+1,self.coords[1]),(self.coords[0]-1,self.coords[1]),
                     (self.coords[0],self.coords[1]+1),(self.coords[0],self.coords[1]-1),
                     (self.coords[0]+1,self.coords[1]+1),(self.coords[0]+1,self.coords[1]-1),
                     (self.coords[0]-1,self.coords[1]+1),(self.coords[0]-1,self.coords[1]-1)]
-        found=[]
         for i in searching:
-            if i in addresses_record:
-                found.append(i)
-        return found
+            if i in address_rec:
+                self.neighbours.append(i)
+
+    def calculate_happiness(self,houses):
+        counter=0
+        for i in self.neighbours:
+            if houses[i].colour==self.colour:
+                counter+=1
+        self.happiness=round(counter/len(self.neighbours),2)
+
 
 
 def colour_allocation(num_of_races,population_of_each_race):
