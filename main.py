@@ -6,12 +6,15 @@ import city
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
+        self.title("Schiller Model Simulation App")
+        self.geometry("1000x500")
+        self.minsize(width="1000",height="500")
         self.user_input_obj=control.Console(self)
         self.user_input_obj.pack()
         self.user_input=self.user_input_obj.dictionary
 
         btn=tk.Button(self,text="Print Map",command=self.printer).pack()
-        next_btn=tk.Button(self,text="Relocate >>",command=self.movement).pack()
+        next_btn=tk.Button(self,text="Relocate >>>",command=self.movement).pack()
         self.mainloop()
 
     def printer(self):
@@ -24,12 +27,6 @@ class App(tk.Tk):
     def movement(self):
         self.books1.update_books()
         self.canva.draw_houses(self.books1.houses)
-
-
-
-
-
-
 
 if __name__=='__main__':
     App()
