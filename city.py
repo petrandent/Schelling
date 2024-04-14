@@ -57,12 +57,12 @@ class Books():
             self.residents[i].find_neighbours(self.addresses_record)
         for i in self.residents:
             self.residents[i].calculate_happiness(self.houses)
-        for i in self.residents:
-            print(f"{self.residents[i].id_num}-->{self.residents[i].colour}//{self.residents[i].coords}:{self.residents[i].happiness}")
+##        for i in self.residents:
+##            print(f"{self.residents[i].id_num}-->{self.residents[i].colour}//{self.residents[i].coords}:{self.residents[i].happiness}")
 
 
     def update_books(self):
-        """all unhappy residents move to a random unoccupied house"""
+        """one random unhappy resident moves to a random unoccupied house"""
         #list of tuples of coords of houses with no residents
         unoccupied_houses=[]
 
@@ -75,23 +75,26 @@ class Books():
                 unoccupied_houses.append(self.houses[i].coords)
         self.neighbours_happiness()
 
-
         #fill unhappy residents
         for i in self.residents:
             if self.residents[i].happiness<self.threshold:
                 unhappy_residents_ids.append(i)
-                unoccupied_houses.append(self.residents[i].coords)
 
-        random.shuffle(unhappy_residents_ids)
-        random.shuffle(unoccupied_houses)
+        moving_resident=random.choice(unhappy_residents_ids)
+        new_house=random.choice(unoccupied_houses)
+        unhappy_residents_ids=[]
+        unoccupied_houses=[]
 
-        for i in range(len(unhappy_residents_ids)):
-            self.residents[unhappy_residents_ids[i]].move_house(unoccupied_houses[i],\
-            self.addresses_record,self.houses)
-            self.residents[unhappy_residents_ids[i]].coords=unoccupied_houses[i]
-            self.houses[unoccupied_houses[i]].resident=self.residents[unhappy_residents_ids[i]]
-        print(unhappy_residents_ids)
-        print(unoccupied_houses)
+        #update of books
+        self.houses[self.residents[moving_resident].coords].resident=None
+        self.houses[self.residents[moving_resident].coords].colour="gray"
+        self.residents[moving_resident].coords=new_house
+        self.houses[new_house].resident=self.residents[moving_resident]
+        self.houses[new_house].colour=self.residents[moving_resident].colour
+        print(f"{self.residents[moving_resident].coords} : evacuation")
+        print(f"{moving_resident} --> {new_house}")
+        print(f"{self.houses[new_house].coords} is now {self.houses[new_house].colour}")
+
 
 class House():
     """class for a house"""
@@ -111,19 +114,20 @@ class House():
 class City_canvas(tk.Frame):
     def __init__(self,parent,books,height=canvas_size,width=canvas_size):
         super().__init__(parent)
+        self.house_list=[]
         frame1=tk.Frame(parent)
         frame1.pack()
         tk.Label(frame1,text="City Map").pack()
         self.canvas=tk.Canvas(frame1,height=height,width=width,bd=1,relief=tk.GROOVE,bg="blue")
         self.canvas.pack()
 
-        #drawing a house is done.
-##        for house in books.houses.values():
-##            self.draw_house(house)
+    def draw_houses(self,houses):
+        for house in houses.values():
+            item=self.canvas.create_rectangle(house.coords[1]*house.width,house.coords[0]*house.height,\
+            (house.coords[1]+1)*house.width,(house.coords[0]+1)*house.height,fill=house.colour)
+            self.house_list.append(item)
 
-    def draw_house(self,house):
-        self.canvas.create_rectangle(house.coords[1]*house.width,house.coords[0]*house.height,\
-        (house.coords[1]+1)*house.width,(house.coords[0]+1)*house.height,fill=house.colour)
+
 
 
 class Resident():
@@ -137,11 +141,6 @@ class Resident():
 
     def __repr__(self):
         return f"id_num:{self.id_num}-colour:{self.colour}-house:({self.coords[0]},{self.coords[1]})"
-
-    def move_house(self,new_coords,address,house_dict):
-        self.coords=new_coords
-        self.find_neighbours(address)
-        self.happiness=self.calculate_happiness(house_dict)
 
     def find_neighbours(self,address_rec):
         searching=[(self.coords[0]+1,self.coords[1]),(self.coords[0]-1,self.coords[1]),
